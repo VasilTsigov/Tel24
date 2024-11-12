@@ -9,7 +9,9 @@ Ext.define('Tel24.view.main.Main', {
 
     requires: [
         'Ext.MessageBox',
-        'Ext.layout.Fit'
+        'Ext.layout.Fit',
+        'Tel24.store.iag.IagStore',
+        'Tel24.view.iag.IagMainList'
     ],
 
     controller: 'main',
@@ -31,7 +33,7 @@ Ext.define('Tel24.view.main.Main', {
             layout: 'fit',
             // The following grid shares a store with the classic version's grid as well!
             items: [{
-                xtype: 'mainlist'
+                xtype: 'iagmainlist'
             }]
         },{
             title: 'Users',
