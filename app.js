@@ -63,13 +63,38 @@ Ext.application({
                     itemtap: function (nestedList, list, index, target, record) {
                         if (record.get('leaf')) {
                             nestedList.getDetailCard().setHtml(
-                                `<b>Име:</b> ${record.get('text')}<br>` +
-                                `<b>Длъжност:</b> ${record.get('dlag')}<br>` +
-                                `<b>Подразделение:</b> ${record.get('pod')}<br>` +
-                                `<b>ЕГН:</b> ${record.get('egn')}<br>` +
-                                `<b>Телефон:</b> ${record.get('gsm')}<br>` +
-                                `<b>Email:</b> ${record.get('email')}<br>` +
-                                `<img src="https://vasil.iag.bg/upload/${record.get('glavpod')}/${record.get('pict')}" alt="Picture of ${record.get('text')}" style="width:120px;height:160px;">`
+                                `<div style="display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 10px;">
+                                    <!-- Container for the image and overlay -->
+                                    <div style="position: relative; display: inline-block;">
+                                        <!-- Main Image -->
+                                        <img src="https://vasil.iag.bg/upload/${record.get('glavpod')}/${record.get('pict')}"
+                                             alt="Picture of ${record.get('text')}"
+                                             style="width:150px; height:225px; border-radius: 8px;">
+                                    </div>
+
+                                    <!-- Additional details below the image -->
+                                    <div style="margin-top: 10px; color: #333;">
+                                        <p><b>${record.get('text')}</b></p>
+                                        <p>${record.get('dlag')}</p>
+                                        <p>${record.get('pod')}</p>
+
+                                        <p><b>Телефон:</b> ${record.get('gsm')}</p>
+                                        <p><b>Email:</b> ${record.get('email')}</p>
+                                    </div>
+
+                                    <!-- Action buttons for call, SMS, and email -->
+                                    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+                                        <button onclick="window.location.href='tel:${record.get('gsm')}'" style="padding: 8px 12px; border-radius: 5px; border: none; background-color: #4CAF50; color: white; cursor: pointer;">
+                                            Call
+                                        </button>
+                                        <button onclick="window.location.href='sms:${record.get('gsm')}'" style="padding: 8px 12px; border-radius: 5px; border: none; background-color: #2196F3; color: white; cursor: pointer;">
+                                            SMS
+                                        </button>
+                                        <button onclick="window.location.href='mailto:${record.get('email')}'" style="padding: 8px 12px; border-radius: 5px; border: none; background-color: #f44336; color: white; cursor: pointer;">
+                                            Email
+                                        </button>
+                                    </div>
+                                </div>`
                             );
                         }
                     }
@@ -81,46 +106,10 @@ Ext.application({
         const tabPanel = Ext.create('Ext.TabPanel', {
             fullscreen: true,
             tabBarPosition: 'bottom',
-            dockedItems: [
-                {
-                    xtype: 'textfield',
-                    docked: 'top',
-                    placeHolder: 'Search by name...',
-                    listeners: {
-                        change: function (field, newValue) {
-                            filterAllTabs(tabPanel, newValue);
-                        }
-                    }
-                }
-            ],
-            items: tabItems
+            items: tabItems // Only include the tab items here
         });
 
         // Add the TabPanel to the viewport
         Ext.Viewport.add(tabPanel);
-
-        // Function to filter all tabs by search term
-        function filterAllTabs(tabPanel, searchText) {
-            searchText = searchText.toLowerCase(); // Convert to lowercase for case-insensitive search
-
-            tabPanel.items.each((tab) => {
-                // Ensure each tab is a nested list with a store to filter
-                if (tab.xtype === 'nestedlist') {
-                    const store = tab.getStore();
-
-                    // Clear existing filters
-                    store.clearFilter();
-
-                    // Apply new filter if search text is not empty
-                    if (searchText) {
-                        store.filterBy((record) => {
-                            const textValue = record.get('text') ? record.get('text').toLowerCase() : '';
-                            return textValue.includes(searchText);
-                        });
-                    }
-                }
-            });
-        }
     }
 });
-
