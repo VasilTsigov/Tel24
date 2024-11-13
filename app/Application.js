@@ -1,27 +1,17 @@
-/**
- * The main application class. An instance of this class is created by app.js when it
- * calls Ext.application(). This is the ideal place to handle application launch and
- * initialization details.
- */
-Ext.define('Tel24.Application', {
+// app/Application.js
+Ext.define('MyApp.Application', {
     extend: 'Ext.app.Application',
+    requires: [
+        'MyApp.view.Main'
+    ],
 
-    name: 'Tel24',
+    controllers: ['MainController'],
 
-    quickTips: false,
-    platformConfig: {
-        desktop: {
-            quickTips: true
-        }
-    },
-
-    onAppUpdate: function () {
-        Ext.Msg.confirm('Application Update', 'This application has an update, reload?',
-            function (choice) {
-                if (choice === 'yes') {
-                    window.location.reload();
-                }
-            }
-        );
+    launch: function () {
+        Ext.Viewport.setMasked({
+            xtype: 'loadmask',
+            message: 'Зареждам данни ...'
+        });
     }
 });
+

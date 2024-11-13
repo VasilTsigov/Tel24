@@ -1,4 +1,21 @@
 {
+    "builds": {
+        "web": {"default": true},
+        "native": {
+            "packager": "cordova",
+            "cordova" : {
+                "config": {
+                    // Uncomment the line below and add the platforms you wish to build for
+                    "platforms": "android",
+
+                    "id": "com.domain.Tel24",
+                    "name": "Tel24"
+                }
+            }
+        }
+    },
+
+
     "name": "Tel24",
     "namespace": "Tel24",
     "version": "1.0.0.0",
@@ -79,7 +96,7 @@
          *         // The file used to save sass variables edited via Sencha Inspector and Sencha Themer.
          *         // This file will automatically be applied to the end of the scss build.
          *         "var": "sass/save.scss",
-         *      
+         *
          *         // The directory used to save generated sass sources.
          *         // This directory will automatically be applied to the end of the scss build.
          *         "src": "sass/save"
@@ -356,7 +373,7 @@
      *          "css": "${app.output.resources}/${app.name}-all.css",
      *          "js": {
      *              "path": "app.js",
-     *              // This setting constrols the output language level.  Set to 'ES6' to 
+     *              // This setting constrols the output language level.  Set to 'ES6' to
      *              // disable the transpiler
      *              "version": "ES5"
      *          },

@@ -69,7 +69,7 @@ Ext.application({
                                 `<b>ЕГН:</b> ${record.get('egn')}<br>` +
                                 `<b>Телефон:</b> ${record.get('gsm')}<br>` +
                                 `<b>Email:</b> ${record.get('email')}<br>` +
-                                `<img src="https://vasil.iag.bg/upload/${record.get('glavpod')}/${record.get('pict')}" alt="Picture of ${record.get('text')}" style="width:80px;height:80px;">`
+                                `<img src="https://vasil.iag.bg/upload/${record.get('glavpod')}/${record.get('pict')}" alt="Picture of ${record.get('text')}" style="width:120px;height:160px;">`
                             );
                         }
                     }
@@ -78,10 +78,49 @@ Ext.application({
         });
 
         // Create the TabPanel with dynamically generated tab items
-        Ext.create('Ext.TabPanel', {
+        const tabPanel = Ext.create('Ext.TabPanel', {
             fullscreen: true,
             tabBarPosition: 'bottom',
+            dockedItems: [
+                {
+                    xtype: 'textfield',
+                    docked: 'top',
+                    placeHolder: 'Search by name...',
+                    listeners: {
+                        change: function (field, newValue) {
+                            filterAllTabs(tabPanel, newValue);
+                        }
+                    }
+                }
+            ],
             items: tabItems
         });
+
+        // Add the TabPanel to the viewport
+        Ext.Viewport.add(tabPanel);
+
+        // Function to filter all tabs by search term
+        function filterAllTabs(tabPanel, searchText) {
+            searchText = searchText.toLowerCase(); // Convert to lowercase for case-insensitive search
+
+            tabPanel.items.each((tab) => {
+                // Ensure each tab is a nested list with a store to filter
+                if (tab.xtype === 'nestedlist') {
+                    const store = tab.getStore();
+
+                    // Clear existing filters
+                    store.clearFilter();
+
+                    // Apply new filter if search text is not empty
+                    if (searchText) {
+                        store.filterBy((record) => {
+                            const textValue = record.get('text') ? record.get('text').toLowerCase() : '';
+                            return textValue.includes(searchText);
+                        });
+                    }
+                }
+            });
+        }
     }
 });
+
