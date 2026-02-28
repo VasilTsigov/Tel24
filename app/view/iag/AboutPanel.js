@@ -6,25 +6,16 @@ Ext.define('MyApp.view.iag.AboutPanel', {
     title: 'За приложението',
 
     requires: [
-        'Ext.Panel',
-        'Ext.Img',
-        'Ext.Button',
-        'Ext.Spacer'
+        'Ext.Img'
     ],
 
     config: {
         layout: 'vbox',
         items: [
             {
-                xtype: 'panel',
+                xtype: 'image',
                 flex: 5,
-                layout: 'fit',
-                items: [
-                    {
-                        xtype: 'image',
-                        src: 'resources/images/Home24.png'
-                    }
-                ]
+                src: 'resources/images/Home24.png'
             },
             // {
             //     xtype: 'panel',

@@ -6,25 +6,16 @@ xtype: 'homepanel',
 title: '',
 
 requires: [
-    'Ext.Panel',
-    'Ext.Img',
-    'Ext.Button',
-    'Ext.Spacer'
+        'Ext.Img'
 ],
 
 config: {
     layout: 'vbox',
     items: [
         {
-            xtype: 'panel',
+                xtype: 'image',
             flex: 1,
-            layout: 'fit',
-            items: [
-                {
-                    xtype: 'image',
-                    src: 'resources/images/main24.png'
-                }
-            ]
+                src: 'resources/images/main24.png'
         },
         // {
         //     xtype: 'panel',

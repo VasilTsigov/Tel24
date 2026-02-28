@@ -4,21 +4,28 @@ Ext.define('MyApp.controller.SearchController', {
 
 
     isLoading: false,  // Flag to track loading state
+    searchTimer: null, // Timer for debounce
 
     showLoadingMask: function() {
         if (!this.isLoading) {  // Only show if not already loading
-            Ext.Viewport.setMasked({
-                xtype: 'loadmask',
-                message: 'Loading...'
-            });
-            this.isLoading = true;  // Set loading flag
+            var view = this.getView();
+            if (view) {
+                view.setMasked({
+                    xtype: 'loadmask',
+                    message: 'Зареждане...'
+                });
+                this.isLoading = true;
+            }
         }
     },
 
     hideLoadingMask: function() {
         if (this.isLoading) {  // Only hide if currently loading
-            Ext.Viewport.setMasked(false);
-            this.isLoading = false;  // Reset loading flag
+            var view = this.getView();
+            if (view) {
+                view.setMasked(false);
+            }
+            this.isLoading = false;
         }
     },
 
@@ -28,6 +35,18 @@ Ext.define('MyApp.controller.SearchController', {
     // //////////////////////////////////////////////////////////////////
 
     onSearchChange: function(field, newValue) {
+        // Clear previous timer if user keeps typing
+        if (this.searchTimer) {
+            clearTimeout(this.searchTimer);
+        }
+
+        // Wait 500ms before executing search logic
+        this.searchTimer = setTimeout(() => {
+            this.performSearch(newValue);
+        }, 500);
+    },
+
+    performSearch: function(newValue) {
         const searchValue = newValue.trim();
         const searchResultList = this.lookupReference('searchResultList');
 
@@ -87,7 +106,43 @@ Ext.define('MyApp.controller.SearchController', {
 
     //////////////////////////////////////////////////////////////////////////////////////
 
-    onEmployeeSelect: function(list, index, target, record) {
+    onEmployeeSelect: function(list, index, target, record, e) {
+        // Check if the tap target has the 'call-trigger' class
+        if (e.getTarget('.call-trigger')) {
+            window.location.href = 'tel:' + record.get('gsm');
+            return; // Stop execution so the detail panel doesn't open
+        }
+
+        // Check if the tap target has the 'sms-trigger' class
+        if (e.getTarget('.sms-trigger')) {
+            window.location.href = 'sms:' + record.get('gsm');
+            return; // Stop execution
+        }
+
+        // Check if the tap target has the 'save-trigger' class
+        if (e.getTarget('.save-trigger')) {
+            this.createAndDownloadVCard(record);
+            return; // Stop execution
+        }
+
+        // Check if the tap target has the 'copy-trigger' class
+        if (e.getTarget('.copy-trigger')) {
+            this.copyToClipboard(record.get('gsm'));
+            return; // Stop execution
+        }
+
+        // Check if the tap target has the 'share-trigger' class
+        if (e.getTarget('.share-trigger')) {
+            this.shareContact(record);
+            return; // Stop execution
+        }
+
+        // Check if the tap target has the 'email-trigger' class
+        if (e.getTarget('.email-trigger')) {
+            window.location.href = 'mailto:' + record.get('email');
+            return; // Stop execution
+        }
+
         // Define the full-screen panel for employee details
         const employeeDetailsPanel = Ext.create('Ext.Panel', {
             fullscreen: true,  // Makes the panel occupy the full screen
@@ -152,6 +207,79 @@ Ext.define('MyApp.controller.SearchController', {
 
         // Show the panel
         Ext.Viewport.add(employeeDetailsPanel);
-    }
+    },
 
+    createAndDownloadVCard: function(record) {
+        var name = record.get('text') || 'Unknown';
+        var phone = record.get('gsm') || '';
+        var email = record.get('email') || '';
+        var title = record.get('dlag') || '';
+        var org = record.get('pod') || 'ИАГ';
+
+        // Construct vCard 3.0 format
+        var vCardData = [
+            'BEGIN:VCARD',
+            'VERSION:3.0',
+            'FN:' + name,
+            'TEL;TYPE=CELL:' + phone,
+            'EMAIL:' + email,
+            'TITLE:' + title,
+            'ORG:' + org,
+            'END:VCARD'
+        ].join('\n');
+
+        // Create a blob and trigger download
+        var blob = new Blob([vCardData], { type: 'text/vcard;charset=utf-8' });
+        var url = window.URL.createObjectURL(blob);
+        
+        var link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', name + '.vcf');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    },
+
+    shareContact: function(record) {
+        if (navigator.share) {
+            var text = [
+                record.get('text'),
+                record.get('dlag'),
+                'Тел: ' + record.get('gsm'),
+                'Email: ' + record.get('email')
+            ].filter(function(val) { return !!val; }).join('\n');
+
+            navigator.share({
+                title: 'Контакт: ' + record.get('text'),
+                text: text
+            })
+            .catch(function(error) { console.log('Error sharing', error); });
+        } else {
+            Ext.Msg.alert('Инфо', 'Споделянето не се поддържа от този браузър.');
+        }
+    },
+
+    copyToClipboard: function(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function() {
+                Ext.toast('Номерът е копиран: ' + text, 2000);
+            }, function(err) {
+                Ext.toast('Грешка при копиране', 2000);
+            });
+        } else {
+            // Fallback for older browsers/webviews
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                Ext.toast('Номерът е копиран: ' + text, 2000);
+            } catch (err) {
+                Ext.toast('Грешка при копиране', 2000);
+            }
+            document.body.removeChild(textArea);
+        }
+    }
 });

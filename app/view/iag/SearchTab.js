@@ -24,7 +24,7 @@ Ext.define('MyApp.view.iag.SearchTab', {
             itemTpl: [
                 '<table>',
                 '    <tr>',
-                '        <td style="padding:10px"><img src="https://vasil.iag.bg/upload/{glavpod}/{pict}" width="80" auto></img></td>',
+                '        <td style="padding:10px"><img src="https://vasil.iag.bg/upload/{glavpod}/{pict}" width="80" style="height:auto;"></td>',
                 '        <td>',
                 '            <table>',
                 '                <tr>',
@@ -33,11 +33,19 @@ Ext.define('MyApp.view.iag.SearchTab', {
                 '                <tr>',
                 '                    <td><small>{pod}</small></td>',
                 '                </tr>',
+                '                <tpl if="gsm">',
                 '                <tr>',
-                '                    <td><small>{gsm}</small></td>',
+                '                    <td>',
+                '                        <small class="call-trigger" style="color:blue; text-decoration:underline; margin-right: 15px;"><span class="x-fa fa-phone" style="margin-right:5px;"></span>{gsm}</small>',
+                '                        <small class="sms-trigger" style="color:green; text-decoration:underline;"><span class="x-fa fa-comment" style="margin-right:5px;"></span>SMS</small>',
+                '                        <small class="save-trigger" style="color:orange; text-decoration:underline; margin-left: 15px;"><span class="x-fa fa-save" style="margin-right:5px;"></span>Запиши</small>',
+                '                        <small class="copy-trigger" style="color:teal; text-decoration:underline; margin-left: 15px;"><span class="x-fa fa-copy" style="margin-right:5px;"></span>Копирай</small>',
+                '                        <small class="share-trigger" style="color:purple; text-decoration:underline; margin-left: 15px;"><span class="x-fa fa-share-alt" style="margin-right:5px;"></span>Сподели</small>',
+                '                    </td>',
                 '                </tr>',
+                '                </tpl>',
                 '                <tr>',
-                '                    <td><small>{email}</small></td>',
+                '                    <td><small class="email-trigger" style="color:blue; text-decoration:underline;"><span class="x-fa fa-envelope" style="margin-right:5px;"></span>{email}</small></td>',
                 '                </tr>',
                 '                <tr>',
                 '                    <td><small>{dlag}</small></td>',
@@ -57,7 +65,7 @@ Ext.define('MyApp.view.iag.SearchTab', {
             listeners: {
                 itemtap: 'onEmployeeSelect'  // Call onEmployeeSelect on item tap
             },
-            // flex: 1
+            flex: 1
         }
     ]
 });
