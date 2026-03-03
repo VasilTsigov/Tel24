@@ -1,0 +1,18 @@
+.custom-loadmask .x-mask-msg {
+  font-size: 24px; /* Adjust size as needed */
+  color: rgb(187, 35, 35); /* Set font color to white */
+  background-color: rgba(0, 0, 0, 0.8); /* Optional: Set background color for contrast */
+  padding: 20px; /* Add padding to make the mask bigger */
+  border-radius: 5px; /* Optional: rounded corners */
+}
+
+/*# sourceMappingURL=app.css.map */
+
+/* Target the overlay mask */
+.x-mask .x-mask-msg {
+    font-size: 24px;        /* Adjust size as needed */
+    color: white !important; /* Set font color to white */
+    background-color: rgba(0, 0, 0, 0.8);  /* Optional: Set background color for contrast */
+    padding: 20px;          /* Add padding to make the mask bigger */
+    border-radius: 5px;     /* Optional: rounded corners */
+}

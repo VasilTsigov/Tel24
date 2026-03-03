@@ -11,6 +11,7 @@ Ext.define('MyApp.store.iag.IagStore',{
         type: 'jsonp',
         url: 'https://vasil.iag.bg/tel/v7/iag_empl',
         callbackKey: 'callback',
+        timeout: 30000,
         reader: {
             type: 'json',
             rootProperty: 'items'
@@ -28,4 +29,17 @@ Ext.define('MyApp.store.iag.IagStore',{
     ],
 
     autoLoad: true,
+
+    listeners: {
+        load: function(store) {
+            console.log('[IagStore] Data loaded successfully. Count:', store.getCount());
+        },
+        exception: function(proxy, response, operation) {
+            console.error('[IagStore] Load failed:', {
+                status: response && response.status,
+                statusText: response && response.statusText,
+                operation: operation
+            });
+        }
+    }
 })

@@ -2,6 +2,20 @@ Ext.define('MyApp.controller.SearchController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.searchcontroller',
 
+    /**
+     * Open a URL using a system handler.  Falls back to changing
+     * `window.location` when not running inside Cordova.
+     */
+    openExternal: function(url) {
+        if (Ext.device && Ext.device.Device && Ext.device.Device.openURL) {
+            Ext.device.Device.openURL(url);
+        } else if (window && window.open) {
+            // In browser or when plugin unavailable, open in system
+            window.open(url, '_system');
+        } else {
+            window.location.href = url;
+        }
+    },
 
     isLoading: false,  // Flag to track loading state
     searchTimer: null, // Timer for debounce
@@ -109,13 +123,13 @@ Ext.define('MyApp.controller.SearchController', {
     onEmployeeSelect: function(list, index, target, record, e) {
         // Check if the tap target has the 'call-trigger' class
         if (e.getTarget('.call-trigger')) {
-            window.location.href = 'tel:' + record.get('gsm');
+            this.openExternal('tel:' + record.get('gsm'));
             return; // Stop execution so the detail panel doesn't open
         }
 
         // Check if the tap target has the 'sms-trigger' class
         if (e.getTarget('.sms-trigger')) {
-            window.location.href = 'sms:' + record.get('gsm');
+            this.openExternal('sms:' + record.get('gsm'));
             return; // Stop execution
         }
 
@@ -139,7 +153,7 @@ Ext.define('MyApp.controller.SearchController', {
 
         // Check if the tap target has the 'email-trigger' class
         if (e.getTarget('.email-trigger')) {
-            window.location.href = 'mailto:' + record.get('email');
+            this.openExternal('mailto:' + record.get('email'));
             return; // Stop execution
         }
 
@@ -189,13 +203,13 @@ Ext.define('MyApp.controller.SearchController', {
 
                     <!-- Action buttons for call, SMS, and email -->
                     <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
-                        <button onclick="window.location.href='tel:${record.get('gsm')}'" style="padding: 8px 12px; border-radius: 5px; border: none; background-color: #4CAF50; color: white; cursor: pointer; font-size:20px">
+                        <button class="call-trigger" style="padding: 8px 12px; border-radius: 5px; border: none; background-color: #4CAF50; color: white; cursor: pointer; font-size:20px">
                             Call
                         </button>
-                        <button onclick="window.location.href='sms:${record.get('gsm')}'" style="padding: 8px 12px; border-radius: 5px; border: none; background-color: #2196F3; color: white; cursor: pointer;font-size:20px">
+                        <button class="sms-trigger" style="padding: 8px 12px; border-radius: 5px; border: none; background-color: #2196F3; color: white; cursor: pointer;font-size:20px">
                             SMS
                         </button>
-                        <button onclick="window.location.href='mailto:${record.get('email')}'" style="padding: 8px 12px; border-radius: 5px; border: none; background-color: #f44336; color: white; cursor: pointer;font-size:20px">
+                        <button class="email-trigger" style="padding: 8px 12px; border-radius: 5px; border: none; background-color: #f44336; color: white; cursor: pointer;font-size:20px">
                             Email
                         </button>
                     </div>
@@ -203,6 +217,18 @@ Ext.define('MyApp.controller.SearchController', {
                     `
                 }
             ]
+        });
+
+        // Add tap handler on the panel element to intercept buttons
+        var me = this;
+        employeeDetailsPanel.element.on('tap', function(evt) {
+            if (evt.getTarget('.call-trigger')) {
+                me.openExternal('tel:' + record.get('gsm'));
+            } else if (evt.getTarget('.sms-trigger')) {
+                me.openExternal('sms:' + record.get('gsm'));
+            } else if (evt.getTarget('.email-trigger')) {
+                me.openExternal('mailto:' + record.get('email'));
+            }
         });
 
         // Show the panel

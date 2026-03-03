@@ -4,6 +4,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=10, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: gap: content:; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content: https://vasil.iag.bg; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vasil.iag.bg; connect-src 'self' https://vasil.iag.bg;">
+    <meta name="theme-color" content="#1f6feb">
 
     <title>MyApp</title>
 
@@ -83,7 +86,35 @@ onAllUpdatedAssetsReady:function(){Microloader.updatedAssetsReady=!0;if(Microloa
 Microloader.appCacheState||Microloader.updatedManifest?(Microloader.appUpdate={updated:!0,app:'updated'===Microloader.appCacheState,manifest:Microloader.updatedManifest&&Microloader.updatedManifest.exportContent()},Microloader.fireAppUpdate()):Microloader.appUpdate={})},fireAppUpdate:function(){Ext.GlobalEvents&&Ext.defer(function(){Ext.GlobalEvents.fireEvent('appupdate',Microloader.appUpdate)},1E3)},checksum:function(content,hash){if(!content||!hash)return!1;var passed=!0,hashLn=hash.length,checksumType=
 content.substring(0,1);'/'==checksumType?content.substring(2,hashLn+2)!==hash&&(passed=!1):'f'==checksumType?content.substring(10,hashLn+10)!==hash&&(passed=!1):'.'==checksumType&&content.substring(1,hashLn+1)!==hash&&(passed=!1);return passed},parseResult:function(result){var rst={};!result.exception&&0!==result.status||Boot.env.phantom?200<=result.status&&300>result.status||304===result.status||Boot.env.phantom||0===result.status&&0<result.content.length?rst.content=result.content:rst.error=!0:
 rst.error=!0;return rst}};return Microloader}();Ext.manifest=Ext.manifest||'bootstrap';Ext.Microloader.run();</script>
+    <link rel="stylesheet" href="/resources/css/app.css">
 
+    <style>
+        #offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #f44336;
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+            animation: slideDown 0.3s ease-in;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
-<body></body>
+<body>
+    <div id="offline-indicator">ОФЛАЙН РЕЖ�?М - Може да използвате закехирани данни</div>
+</body>
 </html>

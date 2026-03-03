@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=10, user-scalable=yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: gap: content:; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content: https://vasil.iag.bg; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vasil.iag.bg; connect-src 'self' https://vasil.iag.bg;">
+    <meta name="theme-color" content="#1f6feb">
 
     <title>MyApp</title>
 
@@ -12,7 +14,33 @@
     <script id="microloader" data-app="934b63f3-5917-47d4-9b38-d132bf6c1c34" type="text/javascript" src="bootstrap.js"></script>
     <link rel="stylesheet" href="/resources/css/app.css">
 
+    <style>
+        #offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #f44336;
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+            animation: slideDown 0.3s ease-in;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
- </body>
+    <div id="offline-indicator">ОФЛАЙН РЕЖИМ - Може да използвате закехирани данни</div>
+</body>
 </html>
